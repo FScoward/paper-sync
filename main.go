@@ -14,8 +14,14 @@
 
 package main
 
-import "github.com/FScoward/paper-sync/cmd"
+import (
+	"fmt"
+	"github.com/FScoward/paper-sync/drobox"
+	"net/http"
+)
 
 func main() {
-	cmd.Execute()
+	client := new(http.Client)
+	fmt.Println(string(drobox.GetDocIdList(client)))
+	//cmd.Execute()
 }
