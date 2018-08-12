@@ -14,7 +14,6 @@ func GetDocIdList(client *http.Client) []byte {
 	req, _  := http.NewRequest(http.MethodPost, DocList, jsonBuf)
 	req.Header.Set("Content-Type", "application/json")
 
-	//client := new(http.Client)
 	resp, _ := post(req, client)
 	body, _ := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
