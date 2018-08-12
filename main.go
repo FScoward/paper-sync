@@ -15,13 +15,14 @@
 package main
 
 import (
+	"net/http"
 	"fmt"
 	"github.com/FScoward/paper-sync/drobox"
-	"net/http"
 )
 
 func main() {
 	client := new(http.Client)
-	fmt.Println(string(drobox.GetDocIdList(client)))
+	//fmt.Println(string(drobox.GetDocIdList(client)))
 	//cmd.Execute()
+	fmt.Println(string(drobox.DownloadDoc(client, "HBYZtzakKmSm7a3xz5VVZ", "markdown")))
 }
