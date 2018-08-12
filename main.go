@@ -15,9 +15,9 @@
 package main
 
 import (
-	"net/http"
 	"fmt"
 	"github.com/FScoward/paper-sync/drobox"
+	"net/http"
 )
 
 func main() {
