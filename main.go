@@ -24,5 +24,8 @@ func main() {
 	client := new(http.Client)
 	//fmt.Println(string(drobox.GetDocIdList(client)))
 	//cmd.Execute()
-	fmt.Println(string(drobox.DownloadDoc(client, "HBYZtzakKmSm7a3xz5VVZ", "markdown")))
+	response := drobox.DownloadDoc(client, "HBYZtzakKmSm7a3xz5VVZ", "markdown")
+	fac := drobox.DownloadDocResponse{}
+	downloadDocResponse, _ := fac.From(response)
+	fmt.Println(downloadDocResponse.Header)
 }
