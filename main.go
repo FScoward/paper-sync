@@ -25,5 +25,6 @@ func main() {
 	//fmt.Println(string(drobox.GetDocIdList(client)))
 	//cmd.Execute()
 	response, _ := drobox.DownloadDoc(client, "TTriQUccwfBTxlqEqSOlX", "markdown")
+	response.Download()
 	fmt.Println(response.Body)
 }

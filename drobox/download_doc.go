@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 const DROPBOX_API_RESULT_KEY = "Dropbox-Api-Result"
@@ -37,4 +38,8 @@ func (downloadDocResponse *DownloadDocResponse) From(httpResponse *http.Response
 		downloadHeader,
 		string(body),
 	}, err
+}
+
+func (downloadDocResponse *DownloadDocResponse) Download() {
+	ioutil.WriteFile(downloadDocResponse.Header.Title+".md", []byte(downloadDocResponse.Body), os.ModePerm)
 }
