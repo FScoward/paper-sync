@@ -15,7 +15,9 @@
 package cmd
 
 import (
+	"github.com/FScoward/paper-sync/drobox"
 	"github.com/spf13/cobra"
+	"net/http"
 )
 
 // downloadCmd represents the download command
@@ -30,9 +32,43 @@ func DownloadCmd() *cobra.Command {
 			This application is a tool to generate the needed files
 			to quickly create a Cobra application.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			cmd.Println("download called")
+			docId, err := cmd.Flags().GetString("doc_id")
+			if err != nil || docId == "" {
+				cmd.Println("Error", err)
+				return
+			}
+
+			cmd.Println("download called", docId)
+			client := new(http.Client)
+			res, err := drobox.DownloadDoc(client, docId, "markdown")
+			cmd.Println("// TITLE:", res.Header.Title)
+			cmd.Println("// REVISION:", res.Header.Revision)
+			cmd.Println("// MIME_TYPE:", res.Header.MimeType)
+			cmd.Println("// OWNER:", res.Header.Owner)
+			cmd.Println("")
+
+			wantPreview, err := cmd.Flags().GetBool("preview")
+			if err != nil {
+				cmd.Println(err)
+			}
+			if wantPreview {
+				cmd.Println(res.Body)
+			}
+
+			wantSave, err := cmd.Flags().GetBool("save")
+			if err != nil {
+				cmd.Println(err)
+			}
+			if wantSave {
+				cmd.Println("Saving...")
+				res.Save()
+				cmd.Println("Done.")
+			}
 		},
 	}
+	downloadCmd.Flags().StringP("doc_id", "i", "", "document id")
+	downloadCmd.Flags().BoolP("save", "s", false, "save?")
+	downloadCmd.Flags().BoolP("preview", "p", false, "preview body?")
 	return downloadCmd
 
 }

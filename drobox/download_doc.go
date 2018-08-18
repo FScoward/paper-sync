@@ -40,6 +40,6 @@ func (downloadDocResponse *DownloadDocResponse) From(httpResponse *http.Response
 	}, err
 }
 
-func (downloadDocResponse *DownloadDocResponse) Download() {
+func (downloadDocResponse *DownloadDocResponse) Save() {
 	ioutil.WriteFile(downloadDocResponse.Header.Title+".md", []byte(downloadDocResponse.Body), os.ModePerm)
 }
