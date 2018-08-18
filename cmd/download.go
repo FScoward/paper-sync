@@ -15,7 +15,9 @@
 package cmd
 
 import (
+	"github.com/FScoward/paper-sync/drobox"
 	"github.com/spf13/cobra"
+	"net/http"
 )
 
 // downloadCmd represents the download command
@@ -30,24 +32,55 @@ func DownloadCmd() *cobra.Command {
 			This application is a tool to generate the needed files
 			to quickly create a Cobra application.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			cmd.Println("download called")
+			docId, err := cmd.Flags().GetString("doc_id")
+			if err != nil || docId == "" {
+				cmd.Println("Error", err)
+				return
+			}
+			cmd.Println("download called", docId)
+			client := new(http.Client)
+			res, err := drobox.DownloadDoc(client, docId, "markdown")
+
+			printHeader(cmd, res)
+			printPreview(cmd, res)
+			save(cmd, res)
 		},
 	}
+	downloadCmd.Flags().StringP("doc_id", "i", "", "document id")
+	downloadCmd.Flags().BoolP("save", "s", false, "save?")
+	downloadCmd.Flags().BoolP("preview", "p", false, "preview body?")
 	return downloadCmd
 
 }
 
-/*func NewVersionCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "version",
-		Short: "short",
-		Long: `long`,
-		Run: func(cmd *cobra.Command, args []string) {
-			cmd.Print("version 0.1")
-		},
+func save(cmd *cobra.Command, res drobox.DownloadDocResponse) {
+	wantSave, err3 := cmd.Flags().GetBool("save")
+	if err3 != nil {
+		cmd.Println(err3)
 	}
-	return cmd
-}*/
+	if wantSave {
+		cmd.Println("Saving...")
+		res.Save()
+		cmd.Println("Done.")
+	}
+}
+
+func printPreview(cmd *cobra.Command, res drobox.DownloadDocResponse) {
+	wantPreview, err2 := cmd.Flags().GetBool("preview")
+	if err2 != nil {
+		cmd.Println(err2)
+	}
+	if wantPreview {
+		cmd.Println(res.Body)
+	}
+}
+
+func printHeader(cmd *cobra.Command, res drobox.DownloadDocResponse) {
+	cmd.Println("// TITLE:", res.Header.Title)
+	cmd.Println("// REVISION:", res.Header.Revision)
+	cmd.Println("// MIME_TYPE:", res.Header.MimeType)
+	cmd.Println("// OWNER:", res.Header.Owner)
+}
 
 func init() {
 	//rootCmd.AddCommand(downloadCmd)
