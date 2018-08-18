@@ -52,6 +52,7 @@ func NewRootCmd() *cobra.Command {
 	cmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	cmd.AddCommand(DownloadCmd())
+	cmd.AddCommand(PaperListCmd())
 
 	return cmd
 }
