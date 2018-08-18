@@ -29,7 +29,7 @@ func (downloadDocResponse *DownloadDocResponse) From(httpResponse *http.Response
 	err := json.Unmarshal([]byte(dropboxApiResult), &downloadHeader)
 	if err != nil {
 		// TODO
-		fmt.Println(fmt.Errorf("Error occured... ", err))
+		fmt.Println(fmt.Errorf("Error occured... %v", err))
 	}
 
 	body, _ := ioutil.ReadAll(httpResponse.Body)

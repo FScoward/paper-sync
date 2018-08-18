@@ -35,7 +35,7 @@ func TestDownloadDoc(t *testing.T) {
 		}
 
 		factory := DownloadDocResponse{}
-		actual := factory.From(response.Result())
+		actual, _ := factory.From(response.Result())
 
 		expect := DownloadDocResponse{
 			Header: DownloadDocHeader{
