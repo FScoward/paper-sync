@@ -37,33 +37,13 @@ func DownloadCmd() *cobra.Command {
 				cmd.Println("Error", err)
 				return
 			}
-
 			cmd.Println("download called", docId)
 			client := new(http.Client)
 			res, err := drobox.DownloadDoc(client, docId, "markdown")
-			cmd.Println("// TITLE:", res.Header.Title)
-			cmd.Println("// REVISION:", res.Header.Revision)
-			cmd.Println("// MIME_TYPE:", res.Header.MimeType)
-			cmd.Println("// OWNER:", res.Header.Owner)
-			cmd.Println("")
 
-			wantPreview, err := cmd.Flags().GetBool("preview")
-			if err != nil {
-				cmd.Println(err)
-			}
-			if wantPreview {
-				cmd.Println(res.Body)
-			}
-
-			wantSave, err := cmd.Flags().GetBool("save")
-			if err != nil {
-				cmd.Println(err)
-			}
-			if wantSave {
-				cmd.Println("Saving...")
-				res.Save()
-				cmd.Println("Done.")
-			}
+			printHeader(cmd, res)
+			printPreview(cmd, res)
+			save(cmd, res)
 		},
 	}
 	downloadCmd.Flags().StringP("doc_id", "i", "", "document id")
@@ -73,17 +53,34 @@ func DownloadCmd() *cobra.Command {
 
 }
 
-/*func NewVersionCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "version",
-		Short: "short",
-		Long: `long`,
-		Run: func(cmd *cobra.Command, args []string) {
-			cmd.Print("version 0.1")
-		},
+func save(cmd *cobra.Command, res drobox.DownloadDocResponse) {
+	wantSave, err3 := cmd.Flags().GetBool("save")
+	if err3 != nil {
+		cmd.Println(err3)
 	}
-	return cmd
-}*/
+	if wantSave {
+		cmd.Println("Saving...")
+		res.Save()
+		cmd.Println("Done.")
+	}
+}
+
+func printPreview(cmd *cobra.Command, res drobox.DownloadDocResponse) {
+	wantPreview, err2 := cmd.Flags().GetBool("preview")
+	if err2 != nil {
+		cmd.Println(err2)
+	}
+	if wantPreview {
+		cmd.Println(res.Body)
+	}
+}
+
+func printHeader(cmd *cobra.Command, res drobox.DownloadDocResponse) {
+	cmd.Println("// TITLE:", res.Header.Title)
+	cmd.Println("// REVISION:", res.Header.Revision)
+	cmd.Println("// MIME_TYPE:", res.Header.MimeType)
+	cmd.Println("// OWNER:", res.Header.Owner)
+}
 
 func init() {
 	//rootCmd.AddCommand(downloadCmd)
