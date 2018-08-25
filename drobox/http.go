@@ -2,6 +2,7 @@ package drobox
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -32,7 +33,7 @@ func DownloadDoc(client *http.Client, docId string, format string) (DownloadDocR
 	return downloadDocResponse.From(resp)
 }
 
-func UpdateDoc(client *http.Client, filePath string, docId string, policy string, revision int, format string) (*http.Response, error) {
+func UpdateDoc(client *http.Client, filePath string, docId string, policy string, revision int, format string) (*UpdateDocResponse, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
@@ -51,7 +52,29 @@ func UpdateDoc(client *http.Client, filePath string, docId string, policy string
 	req.Header.Set("Dropbox-API-Arg", arg)
 	req.Header.Set("Content-Type", "application/octet-stream")
 
-	return post(req, client)
+	updateDocResponse := UpdateDocResponse{}
+	response, err := post(req, client)
+	if err != nil {
+		return nil, err
+	}
+
+	readAll, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.Status != http.StatusText(http.StatusOK) {
+		errorResponse := UpdateDocErrorResponse{}
+		json.Unmarshal(readAll, &errorResponse)
+		return nil, &errorResponse
+	}
+
+	unmarshal := json.Unmarshal(readAll, &updateDocResponse)
+	if unmarshal != nil {
+		return nil, unmarshal
+	}
+
+	return &updateDocResponse, nil
 }
 
 func post(req *http.Request, client *http.Client) (*http.Response, error) {
