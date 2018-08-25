@@ -29,19 +29,28 @@ func PaperListCmd() *cobra.Command {
 		Use:   "paperList",
 		Short: "Show Paper List. ID and TITLE.",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("paperList called")
+			fmt.Print("paperList called\r")
 
 			client := new(http.Client)
 			idList := drobox.GetDocIdList(client)
 			docIdList := &drobox.DocIdList{}
 			json.Unmarshal(idList, &docIdList)
+			responseList := map[string]drobox.DownloadDocResponse{}
 			for _, v := range docIdList.DocIds {
 				response, _ := drobox.DownloadDoc(client, v, "markdown")
-				fmt.Println("ID:", v, "TITLE:", response.Header.Title)
+				responseList[v] = response
+				fmt.Printf("access... %v\r", v)
 			}
+			showResult(responseList)
 		},
 	}
 	return paperListCmd
+}
+
+func showResult(responseList map[string]drobox.DownloadDocResponse) {
+	for id, response := range responseList {
+		fmt.Println("ID:", id, "TITLE:", response.Header.Title)
+	}
 }
 
 func init() {
