@@ -32,6 +32,28 @@ func DownloadDoc(client *http.Client, docId string, format string) (DownloadDocR
 	return downloadDocResponse.From(resp)
 }
 
+func UpdateDoc(client *http.Client, filePath string, docId string, policy string, revision int, format string) (*http.Response, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	read, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	body := &bytes.Buffer{}
+	body.Write(read)
+	req, _ := http.NewRequest(http.MethodPost, Update, body)
+	arg := fmt.Sprintf(`{"doc_id": "%s", "doc_update_policy": {".tag":"%s"}, "revision": %d, "import_format": "%s"}`, docId, policy, revision, format)
+	req.Header.Set("Dropbox-API-Arg", arg)
+	req.Header.Set("Content-Type", "application/octet-stream")
+
+	return post(req, client)
+}
+
 func post(req *http.Request, client *http.Client) (*http.Response, error) {
 	accessKey := os.Getenv("DROPBOX_PAPER_ACCESS_TOKEN")
 	req.Header.Set("Authorization", "Bearer "+accessKey)
