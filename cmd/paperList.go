@@ -49,7 +49,7 @@ func PaperListCmd() *cobra.Command {
 
 func showResult(responseList map[string]drobox.DownloadDocResponse) {
 	for id, response := range responseList {
-		fmt.Println("ID:", id, "TITLE:", response.Header.Title)
+		fmt.Println("ID:", id, "TITLE:", response.Header.Title, "REVISION:", response.Header.Revision)
 	}
 }
 
