@@ -25,4 +25,7 @@ func main() {
 	//response, _ := drobox.DownloadDoc(client, "TTriQUccwfBTxlqEqSOlX", "markdown")
 	//response.Save()
 	//fmt.Println(response.Body)
+
+	//_, err := drobox.UpdateDoc(client, "./README.md", "TTriQUccwfBTxlqEqSOlX", "overwrite_all", 48, "markdown")
+	//fmt.Println(err)
 }

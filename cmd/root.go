@@ -53,6 +53,7 @@ func NewRootCmd() *cobra.Command {
 
 	cmd.AddCommand(DownloadCmd())
 	cmd.AddCommand(PaperListCmd())
+	cmd.AddCommand(UpdateCmd())
 
 	return cmd
 }
